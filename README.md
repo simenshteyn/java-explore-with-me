@@ -1,2 +1,2 @@
-# java-explore-with-me
+# Дипломный проект
 Template repository for ExploreWithMe project.
