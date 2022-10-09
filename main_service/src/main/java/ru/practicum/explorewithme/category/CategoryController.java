@@ -30,7 +30,7 @@ public class CategoryController {
             @RequestParam(required = false, defaultValue = "0") int from,
             @RequestParam(required = false, defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(categoryService.getAllCategories(from, size));
+        return ResponseEntity.ok(categoryService.getAllCategories(from, size).getContent());
     }
 
     @GetMapping("/categories/{categoryId}")

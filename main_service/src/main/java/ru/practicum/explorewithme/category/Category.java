@@ -1,7 +1,8 @@
 package ru.practicum.explorewithme.category;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.practicum.explorewithme.validator.OnCreate;
 import ru.practicum.explorewithme.validator.OnUpdate;
 
@@ -11,7 +12,8 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "categories")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Category {
     @Id

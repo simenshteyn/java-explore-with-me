@@ -1,6 +1,8 @@
 package ru.practicum.explorewithme.validator;
 
+import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.ConstraintViolationException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,5 +49,11 @@ public class ValidationErrorHandler {
             errors.put(fieldName, errorMessage);
         });
         return errors;
+    }
+
+    @ExceptionHandler(ConversionFailedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<?> handleConflict(RuntimeException ex) {
+        return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Unknown ENUM"));
     }
 }

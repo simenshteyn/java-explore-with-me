@@ -1,12 +1,12 @@
 package ru.practicum.explorewithme.category;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.validator.OffsetBasedPageRequest;
 
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -24,9 +24,9 @@ public class PersistentCategoryStorage implements CategoryStorage {
     }
 
     @Override
-    public List<Category> getAllCategories(int from, int size) {
+    public Page<Category> getAllCategories(int from, int size) {
         Pageable pageable = new OffsetBasedPageRequest(from, size);
-        return categoryRepository.findAll();
+        return categoryRepository.findAll(pageable);
     }
 
     @Override
