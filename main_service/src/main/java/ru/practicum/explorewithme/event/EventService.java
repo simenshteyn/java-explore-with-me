@@ -9,11 +9,13 @@ import ru.practicum.explorewithme.category.Category;
 import ru.practicum.explorewithme.category.CategoryStorage;
 import ru.practicum.explorewithme.event.dto.AdminUpdateEventDto;
 import ru.practicum.explorewithme.event.dto.NewEventDto;
+import ru.practicum.explorewithme.event.dto.UpdateEventDto;
 import ru.practicum.explorewithme.user.User;
 import ru.practicum.explorewithme.user.UserStorage;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class EventService {
@@ -31,9 +33,51 @@ public class EventService {
     }
 
     public List<Event> getAllEvents(int from, int size, boolean paid, EventSort sort) {
-        System.out.println("SORT: " + sort.toString());
+        // TODO SORT
         return eventStorage.getAllEvents(from, size, paid);
     }
+
+    public Event getEventById(Long eventId) {
+        return eventStorage.getEventById(eventId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find event")
+        );
+    }
+
+    public Event getCurrentUserEventById(Long userId, Long eventId) {
+        User user = userStorage.getUserById(userId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find user")
+        );
+        Event event = eventStorage.getEventById(eventId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find event")
+        );
+        if (!Objects.equals(event.getInitiator().getId(), userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only initiator can get full info about event");
+        }
+        return eventStorage.getEventById(eventId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.CONFLICT, "Unable to get event for current user")
+        );
+    }
+
+    public Event cancelCurrentUserEventById(Long userId, Long eventId) {
+        User user = userStorage.getUserById(userId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find user")
+        );
+        Event event = eventStorage.getEventById(eventId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find event")
+        );
+        if (!Objects.equals(event.getInitiator().getId(), userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only initiator can cancel own event");
+        }
+        if (!event.getState().equals(EventState.PENDING)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only pending event can be cancelled");
+        }
+        event.setState(EventState.CANCELED);
+        return eventStorage.updateEvent(eventId, event).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.CONFLICT, "Unable to cancel event by current user")
+        );
+
+    }
+
 
     public List<Event> getEventsByUserIds(List<Long> userIds, int from, int size) {
         return eventStorage.getEventsByUserIds(userIds, from, size);
@@ -54,6 +98,37 @@ public class EventService {
         return eventStorage.addEvent(event).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.CONFLICT, "Unable to add event")
         );
+    }
+
+    public List<Event> getCurrentUserEvents(Long userId, int from, int size) {
+        User user = userStorage.getUserById(userId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find user")
+        );
+        return eventStorage.getEventsByUserId(user.getId(), from, size);
+    }
+
+    public Event updateCurrentUserEvent(Long userId, UpdateEventDto updateEventDto) {
+        User user = userStorage.getUserById(userId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find user")
+        );
+        Event event = eventStorage.getEventById(updateEventDto.getEventId()).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find event")
+        );
+        if (!Objects.equals(event.getInitiator().getId(), user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only initiator can update event");
+        }
+        if (event.getState().equals(EventState.PUBLISHED)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't update published event");
+        }
+        if (updateEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Event date can't be less than 2 hours from now");
+        }
+        Event updatedEvent = modelMapper.map(updateEventDto, Event.class);
+        Event result = eventStorage.updateEvent(event.getId(), updatedEvent).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Unable to update event")
+        );
+        if (result.getState().equals(EventState.CANCELED)) result.setState(EventState.PENDING);
+        return result;
     }
 
     public Event updateEvent(Long eventId, AdminUpdateEventDto adminUpdateEventDto) {

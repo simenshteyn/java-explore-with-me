@@ -41,6 +41,12 @@ public class PersistentEventStorage implements EventStorage {
     }
 
     @Override
+    public List<Event> getEventsByUserId(Long userId, int from, int size) {
+        Pageable pageable = new OffsetBasedPageRequest(from, size);
+        return eventRepository.findAllByInitiatorIdOrderByIdDesc(userId, pageable);
+    }
+
+    @Override
     @Transactional
     public Optional<Event> updateEvent(Long eventId, Event event) {
         Event searchEvent = eventRepository.findById(eventId).orElse(null);

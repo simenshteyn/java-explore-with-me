@@ -7,10 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.explorewithme.event.dto.AdminUpdateEventDto;
-import ru.practicum.explorewithme.event.dto.EventFullDto;
-import ru.practicum.explorewithme.event.dto.EventShortDto;
-import ru.practicum.explorewithme.event.dto.NewEventDto;
+import ru.practicum.explorewithme.event.dto.*;
 import ru.practicum.explorewithme.validator.ValidationErrorBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +39,11 @@ public class EventController {
                 .map(this::convertToDto).collect(Collectors.toList()));
     }
 
+    @GetMapping("/events/{eventId}")
+    public ResponseEntity<?> getEventById(@PathVariable @Positive Long eventId) {
+        return ResponseEntity.ok(convertToFullDto(eventService.getEventById(eventId)));
+    }
+
     @GetMapping("/admin/events")
     public ResponseEntity<?> getEventsByUsersIds(
             @RequestParam(value = "users") List<Long> userIds,
@@ -64,6 +66,46 @@ public class EventController {
             return ResponseEntity.badRequest().body(ValidationErrorBuilder.fromBindingErrors(errors));
         }
         return ResponseEntity.ok(convertToFullDto(eventService.createEvent(userId, newEventDto)));
+    }
+
+    @PatchMapping("/users/{userId}/events")
+    @Validated
+    public ResponseEntity<?> updateCurrentUserEvent(
+            HttpServletRequest request,
+            @RequestBody @Valid UpdateEventDto updateEventDto,
+            @PathVariable @Positive Long userId,
+            Errors errors) {
+        if (errors.hasErrors()) {
+            log.info("Validation error with request: " + request.getRequestURI());
+            return ResponseEntity.badRequest().body(ValidationErrorBuilder.fromBindingErrors(errors));
+        }
+        return ResponseEntity.ok(convertToFullDto(eventService.updateCurrentUserEvent(userId, updateEventDto)));
+
+    }
+
+    @GetMapping("/users/{userId}/events")
+    public ResponseEntity<?> getCurrentUserEvents(
+            @PathVariable @Positive Long userId,
+            @RequestParam(required = false, defaultValue = "0") int from,
+            @RequestParam(required = false, defaultValue = "10") int size) {
+        return ResponseEntity.ok(eventService.getCurrentUserEvents(userId, from, size).stream()
+                .map(this::convertToDto).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/users/{userId}/events/{eventId}")
+    public ResponseEntity<?> getCurrentUserEventById(
+            @PathVariable @Positive Long userId,
+            @PathVariable @Positive Long eventId
+    ) {
+        return ResponseEntity.ok(convertToFullDto(eventService.getCurrentUserEventById(userId, eventId)));
+    }
+
+    @PatchMapping("/users/{userId}/events/{eventId}")
+    public ResponseEntity<?> cancelCurrentUserEventById(
+            @PathVariable @Positive Long userId,
+            @PathVariable @Positive Long eventId
+    ) {
+        return ResponseEntity.ok(convertToFullDto(eventService.cancelCurrentUserEventById(userId, eventId)));
     }
 
     @PutMapping("/admin/events/{eventId}")
