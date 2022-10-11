@@ -2,6 +2,7 @@ package ru.practicum.explorewithme.event;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 import ru.practicum.explorewithme.category.Category;
 import ru.practicum.explorewithme.compilation.Compilation;
 import ru.practicum.explorewithme.user.User;
@@ -54,4 +55,6 @@ public class Event {
     @ManyToMany(mappedBy = "events")
     @JsonIgnore
     private List<Compilation> compilations;
+    @Formula("(SELECT COUNT(*) FROM participations p WHERE p.event_id = event_id AND p.status = 'CONFIRMED')")
+    private long confirmedRequests;
 }

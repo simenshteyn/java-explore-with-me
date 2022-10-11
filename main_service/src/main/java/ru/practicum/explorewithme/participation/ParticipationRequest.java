@@ -29,7 +29,8 @@ public class ParticipationRequest {
     @ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "requester_id")
     private User requester;
-    @Column
+//    @Column
+    @Enumerated(EnumType.STRING)
     private ParticipationRequestStatus status;
     @Column
     private LocalDateTime created;
