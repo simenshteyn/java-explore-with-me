@@ -1,15 +1,76 @@
-version: '3.1'
+version: '3.9'
+
+volumes:
+  postgres_main_data:
+  postgres_stats_data:
+
 services:
+
   stats-server:
+    build:
+      context: .
+      dockerfile: stat_service/Dockerfile
+    container_name: stat-service
     ports:
-      - "9090:9090"
+      - '9090:9090'
+    depends_on:
+      stats-db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/billboard
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRINT_DATASOURCE_PASSWORD=password
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
 
   stats-db:
-    image: postgres:14-alpine
+    image: 'postgres:14-alpine'
+    container_name: stats-db
+    restart: always
+    volumes:
+      - postgres_main_data:/var/lib/postgresql/data
+    expose:
+      - 5432
+    healthcheck:
+      test: [ 'CMD-SHELL', 'su postgres', '&&', 'pg_isready' ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    environment:
+      POSTGRES_DB: billboard
+      POSTGRES_PASSWORD: password
 
   ewm-service:
+    build:
+      context: .
+      dockerfile: main_service/Dockerfile
+    container_name: ewm-service
     ports:
-      - "8080:8080"
+      - '8080:8080'
+    depends_on:
+      ewm-db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/billboard
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRINT_DATASOURCE_PASSWORD=password
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+
 
   ewm-db:
-    image: postgres:14-alpine
+    image: 'postgres:14-alpine'
+    container_name: emw-db
+    restart: always
+    volumes:
+      - postgres_stats_data:/var/lib/postgresql/data
+    expose:
+      - 5432
+    healthcheck:
+      test: [ 'CMD-SHELL', 'su postgres', '&&', 'pg_isready' ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    environment:
+      POSTGRES_DB: billboard
+      POSTGRES_PASSWORD: password

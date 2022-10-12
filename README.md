@@ -1,7 +1,11 @@
-# Дипломный проект
-Template repository for ExploreWithMe project.
+# Дипломный проект "Explore with me"
 
-**Deployment on local machine without tests:**
+Запуск контейнеризованного backend-сервиса на локальной машине:
 ```
-docker run --rm -d -p 5432:5432 -e POSTGRES_DB=billboard -e POSTGRES_PASSWORD=password postgres && mvn spring-boot:run
+docker-compose up --build -d
+```
+
+Удаление контейнеризованного backend-сервиса на локальной машине:
+```
+docker-compose down -v
 ```

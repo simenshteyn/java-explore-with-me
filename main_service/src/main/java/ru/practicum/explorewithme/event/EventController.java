@@ -34,8 +34,13 @@ public class EventController {
             @RequestParam(required = false, defaultValue = "0") int from,
             @RequestParam(required = false, defaultValue = "10") int size,
             @RequestParam(required = false, defaultValue = "false") boolean paid,
-            @RequestParam(required = false, defaultValue = "EVENT_DATE") EventSort sort) {
-        return ResponseEntity.ok(eventService.getAllEvents(from, size, paid, sort).stream()
+            @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable,
+            @RequestParam(required = false, defaultValue = "") String rangeStart,
+            @RequestParam(required = false, defaultValue = "") String rangeEnd,
+            @RequestParam(required = false, defaultValue = "EVENT_DATE") EventSort sort,
+            @RequestParam(required = false, defaultValue = "") String text,
+            @RequestParam(required = false, defaultValue = "null") List<Long> categories) {
+        return ResponseEntity.ok(eventService.getAllEvents(from, size, categories, paid, sort).stream()
                 .map(this::convertToDto).collect(Collectors.toList()));
     }
 

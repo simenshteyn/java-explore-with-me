@@ -29,7 +29,7 @@ public class PersistentEventStorage implements EventStorage {
     }
 
     @Override
-    public List<Event> getAllEvents(int from, int size, boolean paid) {
+    public List<Event> getAllEvents(int from, int size, List<Long> categories, boolean paid) {
         Pageable pageable = new OffsetBasedPageRequest(from, size);
         return eventRepository.findAllByPaidOrderByIdDesc(paid, pageable);
     }

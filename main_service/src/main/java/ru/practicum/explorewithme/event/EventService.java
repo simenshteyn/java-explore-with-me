@@ -32,9 +32,8 @@ public class EventService {
         this.modelMapper = modelMapper;
     }
 
-    public List<Event> getAllEvents(int from, int size, boolean paid, EventSort sort) {
-        // TODO SORT
-        return eventStorage.getAllEvents(from, size, paid);
+    public List<Event> getAllEvents(int from, int size, List<Long> categories, boolean paid, EventSort sort) {
+        return eventStorage.getAllEvents(from, size, categories, paid);
     }
 
     public Event getEventById(Long eventId) {
