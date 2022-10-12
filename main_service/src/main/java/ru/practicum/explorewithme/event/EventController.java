@@ -13,7 +13,6 @@ import ru.practicum.explorewithme.validator.ValidationErrorBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
