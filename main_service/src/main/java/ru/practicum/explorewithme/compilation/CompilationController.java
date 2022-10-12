@@ -63,8 +63,7 @@ public class CompilationController {
     @PatchMapping("/admin/compilations/{compilationId}/events/{eventId}")
     public ResponseEntity<?> addEventToCompilation(
             @PathVariable @Positive Long compilationId,
-            @PathVariable @Positive Long eventId){
-        System.out.println("PATCH STARTED " + compilationId + " " + eventId);
+            @PathVariable @Positive Long eventId) {
         return ResponseEntity.ok(convertToDto(compilationService.addEventToCompilation(compilationId, eventId)));
     }
 

@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest, Long> {
     List<ParticipationRequest> findAllByRequesterIdOrderByIdDesc(Long requesterId);
+
     List<ParticipationRequest> findAllByEventIdOrderByIdDesc(Long eventId);
 }

@@ -65,7 +65,7 @@ public class EventController {
             HttpServletRequest request,
             @RequestBody @Valid NewEventDto newEventDto,
             @PathVariable @Positive Long userId,
-            Errors errors){
+            Errors errors) {
         if (errors.hasErrors()) {
             log.info("Validation error with request: " + request.getRequestURI());
             return ResponseEntity.badRequest().body(ValidationErrorBuilder.fromBindingErrors(errors));
