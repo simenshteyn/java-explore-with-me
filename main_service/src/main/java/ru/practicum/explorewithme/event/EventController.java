@@ -13,6 +13,7 @@ import ru.practicum.explorewithme.validator.ValidationErrorBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,11 +22,13 @@ import java.util.stream.Collectors;
 @Validated
 public class EventController {
     private final EventService eventService;
+    private final EventClient eventClient;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public EventController(EventService eventService, ModelMapper modelMapper) {
+    public EventController(EventService eventService, EventClient eventClient, ModelMapper modelMapper) {
         this.eventService = eventService;
+        this.eventClient = eventClient;
         this.modelMapper = modelMapper;
     }
 
@@ -39,13 +42,16 @@ public class EventController {
             @RequestParam(required = false, defaultValue = "") String rangeEnd,
             @RequestParam(required = false, defaultValue = "EVENT_DATE") EventSort sort,
             @RequestParam(required = false, defaultValue = "") String text,
-            @RequestParam(required = false, defaultValue = "null") List<Long> categories) {
+            @RequestParam(required = false, defaultValue = "") List<Long> categories,
+            HttpServletRequest request) {
+        eventClient.createHit(EventHitDto.requestToDto(request));
         return ResponseEntity.ok(eventService.getAllEvents(from, size, categories, paid, sort).stream()
                 .map(this::convertToDto).collect(Collectors.toList()));
     }
 
     @GetMapping("/events/{eventId}")
-    public ResponseEntity<?> getEventById(@PathVariable @Positive Long eventId) {
+    public ResponseEntity<?> getEventById(@PathVariable @Positive Long eventId,HttpServletRequest request) {
+        eventClient.createHit(EventHitDto.requestToDto(request));
         return ResponseEntity.ok(convertToFullDto(eventService.getEventById(eventId)));
     }
 

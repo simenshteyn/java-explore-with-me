@@ -54,6 +54,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/billboard
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRINT_DATASOURCE_PASSWORD=password
+      - STATSERVER_URL=http://stats-server:9090
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
 
