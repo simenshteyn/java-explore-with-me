@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface EndpointHitStorage {
     Optional<EndpointHit> addEndpointHit(EndpointHit endpointHit);
+
     List<ViewStatsDto> getViewsStats(String uri, LocalDateTime start, LocalDateTime end);
 }

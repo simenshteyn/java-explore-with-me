@@ -84,7 +84,7 @@ public class ParticipationRequestService {
         Event event = eventStorage.getEventById(eventId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find event")
         );
-        if (event.getInitiator().getId() != userId) {
+        if (!Objects.equals(event.getInitiator().getId(), userId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only initiator of event can get all requests");
         }
         return participationRequestStorage.getRequestsForEvent(eventId);
@@ -97,7 +97,7 @@ public class ParticipationRequestService {
         Event event = eventStorage.getEventById(eventId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find event")
         );
-        if (event.getInitiator().getId() != userId) {
+        if (!Objects.equals(event.getInitiator().getId(), userId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You should own event to confirm request");
         }
         if (event.getParticipantLimit() == 0) {
