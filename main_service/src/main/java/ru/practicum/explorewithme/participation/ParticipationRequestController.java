@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @RestController
 @Slf4j
 @Validated
+@RequestMapping(path = "/users")
 public class ParticipationRequestController {
     private final ParticipationRequestService participationRequestService;
     private final ModelMapper modelMapper;
@@ -24,13 +25,13 @@ public class ParticipationRequestController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/users/{userId}/requests")
+    @GetMapping("/{userId}/requests")
     public ResponseEntity<?> getParticipationRequestsByUserId(@PathVariable @Positive Long userId) {
         return ResponseEntity.ok(participationRequestService.getParticipationRequestsByUserId(userId).stream()
                 .map(this::convertToDto).collect(Collectors.toList()));
     }
 
-    @PostMapping("/users/{userId}/requests")
+    @PostMapping("/{userId}/requests")
     public ResponseEntity<?> addParticipationRequestFromUser(
             @PathVariable @Positive Long userId,
             @RequestParam(required = true) Long eventId) {
@@ -39,7 +40,7 @@ public class ParticipationRequestController {
         );
     }
 
-    @PatchMapping("/users/{userId}/requests/{requestId}/cancel")
+    @PatchMapping("/{userId}/requests/{requestId}/cancel")
     public ResponseEntity<?> cancelParticipationRequestFromUser(
             @PathVariable @Positive Long userId,
             @PathVariable @Positive Long requestId) {
@@ -48,7 +49,7 @@ public class ParticipationRequestController {
         );
     }
 
-    @GetMapping("/users/{userId}/events/{eventId}/requests")
+    @GetMapping("/{userId}/events/{eventId}/requests")
     public ResponseEntity<?> getUserRequestsForEvent(
             @PathVariable @Positive Long userId,
             @PathVariable @Positive Long eventId
@@ -57,7 +58,7 @@ public class ParticipationRequestController {
                 .map(this::convertToDto).collect(Collectors.toList()));
     }
 
-    @PatchMapping("/users/{userId}/events/{eventId}/requests/{requestId}/confirm")
+    @PatchMapping("/{userId}/events/{eventId}/requests/{requestId}/confirm")
     public ResponseEntity<?> confirmRequestToEvent(
             @PathVariable @Positive Long userId,
             @PathVariable @Positive Long eventId,
@@ -66,7 +67,7 @@ public class ParticipationRequestController {
         return ResponseEntity.ok(convertToDto(participationRequestService.confirmRequestToEvent(userId, eventId, requestId)));
     }
 
-    @PatchMapping("/users/{userId}/events/{eventId}/requests/{requestId}/reject")
+    @PatchMapping("/{userId}/events/{eventId}/requests/{requestId}/reject")
     public ResponseEntity<?> rejectRequestToEvent(
             @PathVariable @Positive Long userId,
             @PathVariable @Positive Long eventId,

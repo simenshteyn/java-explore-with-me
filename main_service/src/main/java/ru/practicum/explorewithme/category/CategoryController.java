@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.explorewithme.validator.OnCreate;
-import ru.practicum.explorewithme.validator.OnUpdate;
+import ru.practicum.explorewithme.category.dto.NewCategoryDto;
+import ru.practicum.explorewithme.category.dto.UpdateCategoryDto;
 import ru.practicum.explorewithme.validator.ValidationErrorBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,29 +39,27 @@ public class CategoryController {
     }
 
     @PostMapping("/admin/categories")
-    @Validated(OnCreate.class)
     public ResponseEntity<?> createCategory(
             HttpServletRequest request,
-            @RequestBody @Valid Category category,
+            @RequestBody @Valid NewCategoryDto newCategoryDto,
             Errors errors) {
         if (errors.hasErrors()) {
             log.info("Validation error with request: " + request.getRequestURI());
             return ResponseEntity.badRequest().body(ValidationErrorBuilder.fromBindingErrors(errors));
         }
-        return ResponseEntity.ok(categoryService.createCategory(category));
+        return ResponseEntity.ok(categoryService.createCategory(newCategoryDto));
     }
 
     @PatchMapping("/admin/categories")
-    @Validated(OnUpdate.class)
     public ResponseEntity<?> updateCategory(
             HttpServletRequest request,
-            @RequestBody @Valid Category category,
+            @RequestBody @Valid UpdateCategoryDto updateCategoryDto,
             Errors errors) {
         if (errors.hasErrors()) {
             log.info("Validation error with request: " + request.getRequestURI());
             return ResponseEntity.badRequest().body(ValidationErrorBuilder.fromBindingErrors(errors));
         }
-        return ResponseEntity.ok(categoryService.updateCategory(category.getId(), category));
+        return ResponseEntity.ok(categoryService.updateCategory(updateCategoryDto));
     }
 
     @DeleteMapping("/admin/categories/{categoryId}")

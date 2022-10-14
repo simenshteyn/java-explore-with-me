@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @Validated
+@RequestMapping(path = "/admin/users")
 public class UserController {
     private final UserService userService;
 
@@ -25,7 +26,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/admin/users")
+    @GetMapping("")
     public ResponseEntity<?> getUsersByIds(
             @RequestParam(value = "ids") List<Long> ids,
             @RequestParam(required = false, defaultValue = "0") int from,
@@ -33,7 +34,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUsersByIds(ids, from, size));
     }
 
-    @PostMapping("/admin/users")
+    @PostMapping("")
     @Validated
     public ResponseEntity<?> createUser(
             HttpServletRequest request,
@@ -46,7 +47,7 @@ public class UserController {
         return ResponseEntity.ok(userService.createUser(newUserDto));
     }
 
-    @DeleteMapping("/admin/users/{userId}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUserById(@PathVariable @Positive Long userId) {
         return ResponseEntity.ok(userService.removeUserById(userId));
     }
