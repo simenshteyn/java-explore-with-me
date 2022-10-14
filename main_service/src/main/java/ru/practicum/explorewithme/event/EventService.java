@@ -16,6 +16,7 @@ import ru.practicum.explorewithme.user.UserStorage;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class EventService {
@@ -123,10 +124,6 @@ public class EventService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Event date can't be less than 2 hours from now");
         }
         Event updatedEvent = modelMapper.map(updateEventDto, Event.class);
-        Category category = categoryStorage.getCategoryById(updateEventDto.getCategory()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find category")
-        );
-        updatedEvent.setCategory(category);
         Event result = eventStorage.updateEvent(event.getId(), updatedEvent).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Unable to update event")
         );
@@ -139,6 +136,8 @@ public class EventService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find event")
         );
         Event event = modelMapper.map(adminUpdateEventDto, Event.class);
+        Optional<Category> category = categoryStorage.getCategoryById(adminUpdateEventDto.getCategory());
+        category.ifPresent(event::setCategory);
         return eventStorage.updateEvent(oldEvent.getId(), event).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.CONFLICT, "Unable to update event")
         );
