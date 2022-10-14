@@ -24,4 +24,5 @@ public class EventShortDto {
     private String title;
     private Boolean paid;
     private int views;
+    private long confirmedRequests;
 }
