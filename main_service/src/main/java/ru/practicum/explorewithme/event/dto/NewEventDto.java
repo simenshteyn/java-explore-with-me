@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.explorewithme.event.Location;
-import ru.practicum.explorewithme.validator.OnCreate;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -24,7 +23,7 @@ public class NewEventDto {
     @NotBlank(message = "Description can't be blank")
     @NotNull(message = "Description can't be null")
     private String description;
-    @NotNull(message = "Event Date can't be null", groups = OnCreate.class)
+    @NotNull(message = "Event Date can't be null")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss", iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
