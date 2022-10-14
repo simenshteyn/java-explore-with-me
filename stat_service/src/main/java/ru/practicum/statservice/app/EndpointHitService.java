@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class EndpointHitService {
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private final EndpointHitStorage endpointHitStorage;
     private final ModelMapper modelMapper;
 
@@ -48,7 +49,7 @@ public class EndpointHitService {
     private LocalDateTime convertURLtoTime(String urlString) {
         try {
             String timeString = java.net.URLDecoder.decode(urlString, StandardCharsets.UTF_8);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
             return LocalDateTime.parse(timeString, formatter);
         } catch (Exception ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unable to encode date string");

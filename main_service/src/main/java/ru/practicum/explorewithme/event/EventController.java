@@ -54,16 +54,6 @@ public class EventController {
         return ResponseEntity.ok(convertToFullDto(eventService.getEventById(eventId)));
     }
 
-    @GetMapping("/admin/events")
-    public ResponseEntity<?> getEventsByUsersIds(
-            @RequestParam(value = "users") List<Long> userIds,
-            @RequestParam(required = false, defaultValue = "0") int from,
-            @RequestParam(required = false, defaultValue = "10") int size) {
-        return ResponseEntity.ok(eventService.getEventsByUserIds(userIds, from, size).stream()
-                .map(this::convertToFullDto).collect(Collectors.toList()));
-    }
-
-
     @PostMapping("/users/{userId}/events")
     @Validated
     public ResponseEntity<?> createEvent(
@@ -117,31 +107,6 @@ public class EventController {
     ) {
         return ResponseEntity.ok(convertToFullDto(eventService.cancelCurrentUserEventById(userId, eventId)));
     }
-
-    @PutMapping("/admin/events/{eventId}")
-    @Validated
-    public ResponseEntity<?> updateEvent(
-            HttpServletRequest request,
-            @RequestBody @Valid AdminUpdateEventDto adminUpdateEventDto,
-            @PathVariable @Positive Long eventId,
-            Errors errors) {
-        if (errors.hasErrors()) {
-            log.info("Validation error with request: " + request.getRequestURI());
-            return ResponseEntity.badRequest().body(ValidationErrorBuilder.fromBindingErrors(errors));
-        }
-        return ResponseEntity.ok(convertToFullDto(eventService.updateEvent(eventId, adminUpdateEventDto)));
-    }
-
-    @PatchMapping("/admin/events/{eventId}/publish")
-    public ResponseEntity<?> publishEventById(@PathVariable @Positive Long eventId) {
-        return ResponseEntity.ok(convertToFullDto(eventService.publishEventById(eventId)));
-    }
-
-    @PatchMapping("/admin/events/{eventId}/reject")
-    public ResponseEntity<?> rejectEventById(@PathVariable @Positive Long eventId) {
-        return ResponseEntity.ok(convertToFullDto(eventService.rejectEventById(eventId)));
-    }
-
 
     private EventShortDto convertToDto(Event event) {
         return modelMapper.map(event, EventShortDto.class);

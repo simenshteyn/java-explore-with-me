@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter
@@ -15,6 +17,9 @@ import java.time.LocalDateTime;
 public class UpdateEventDto {
     private String annotation;
     private Long category;
+    @NotBlank(message = "Description can't be blank")
+    @NotNull(message = "Description can't be null")
+    @Size(min = 20, max = 7000, message = "Description should be between 20 and 7000 chars")
     private String description;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss", iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
