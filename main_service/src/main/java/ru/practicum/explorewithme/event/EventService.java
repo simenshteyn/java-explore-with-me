@@ -123,6 +123,10 @@ public class EventService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Event date can't be less than 2 hours from now");
         }
         Event updatedEvent = modelMapper.map(updateEventDto, Event.class);
+        Category category = categoryStorage.getCategoryById(updateEventDto.getCategory()).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find category")
+        );
+        updatedEvent.setCategory(category);
         Event result = eventStorage.updateEvent(event.getId(), updatedEvent).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Unable to update event")
         );
