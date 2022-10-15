@@ -28,6 +28,7 @@ public class AdminUpdateEventDto {
     private Location location;
     private Integer participantLimit;
     private Boolean requestModeration;
+    private Boolean paid;
     @NotBlank(message = "Title can't be blank")
     @NotNull(message = "Title can't be null")
     @Size(min = 3, max = 120, message = "Title should be between 3 and 120 chars")
