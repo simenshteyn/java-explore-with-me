@@ -1,0 +1,101 @@
+@startuml
+class User {
+    email: String
+    id: int
+    name: String
+}
+class Event {
+    annotation: String[20..2000]
+    category: int
+    description: String[200..7000]
+    eventDate: String
+    location: Location
+    paid: boolean
+    participantLimit: int
+    requestModeration: boolean
+    title: String
+}
+Event o-> Location
+Event "*" --> "1" Category
+
+class Location {
+    lat: float
+    lon: float
+}
+class Category {
+    id: int
+    name: String
+}
+class Compilation {
+    events: List<int>
+    pinned: boolean
+    title: String
+}
+Compilation "*" --> "*" Event
+
+class ParticipationRequest {
+    created: String
+    event: Event
+    id: int
+    requester: User
+    status: String
+}
+ParticipationRequest "*" --> "1" User
+ParticipationRequest "*" --> "1" Event
+
+package Services {
+    class EventService
+    class CompilationService
+    class CategoryService
+    class ParticipationRequestService
+    class UserService
+}
+
+class EventService {
+    getAllEvents()
+    getEventById()
+    getEventsCreatedByUser()
+    updateEventCreatedByUser()
+    addNewEvent()
+    getEventCreatedByUser()
+    cancelEventCreatedByUser()
+    searchEvents()
+    editEventById()
+    publishEventById()
+    rejectEventById()
+}
+
+class ParticipationRequestService {
+    getUserParticipationRequestsForEvent()
+    approveParticipationRequest()
+    rejectParticipationRequest()
+    addParticipationRequest()
+    cancelParticipationRequest()
+}
+
+class CompilationService {
+    getAllCompilations()
+    getCompilationById()
+    addCompilation()
+    removeCompilationById()
+    removeEventFromCompilation()
+    addEventToCompilation()
+    pinCompilation()
+    unpinCompilation()
+}
+
+class CategoryService {
+    getAllCategories()
+    getCategoryById()
+    updateCategory()
+    addCategory()
+    removeCategoryById()
+}
+
+class UserService {
+    getUsers()
+    addUser()
+    removeUserById()
+}
+
+@enduml
