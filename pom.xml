@@ -26,13 +26,15 @@
 		<module>stat_service</module>
 	</modules>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.modelmapper</groupId>
-			<artifactId>modelmapper</artifactId>
-			<version>3.1.0</version>
-		</dependency>
-	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.modelmapper</groupId>
+				<artifactId>modelmapper</artifactId>
+				<version>3.1.0</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<pluginManagement>

@@ -28,5 +28,8 @@ public class UpdateEventDto {
     private Long eventId;
     private Boolean paid;
     private Integer participantLimit;
+    @NotBlank(message = "Title can't be blank")
+    @NotNull(message = "Title can't be null")
+    @Size(min = 3, max = 120, message = "Title should be between 3 and 120 chars")
     private String title;
 }
